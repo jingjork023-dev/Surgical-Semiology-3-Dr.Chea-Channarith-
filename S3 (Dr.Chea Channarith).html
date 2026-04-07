@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Surgical Semiology 3 (Dr.Chea Channarith)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@400;700&display=swap');
+        body { font-family: 'ui-sans-serif', system-ui, 'Kantumruy Pro', sans-serif; }
+        
+        .option-correct {
+            background-color: #dcfce7 !important;
+            border-color: #22c55e !important;
+            animation: pulse-green 0.4s ease-out;
+        }
+        .option-incorrect {
+            background-color: #fee2e2 !important;
+            border-color: #ef4444 !important;
+            animation: shake 0.4s ease-in-out;
+        }
+        @keyframes pulse-green {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-4px); }
+            75% { transform: translateX(4px); }
+        }
+        .disabled-labels { pointer-events: none; opacity: 0.8; }
+        .redo-btn {
+            font-size: 0.75rem;
+            padding: 4px 10px;
+            border-radius: 6px;
+            background-color: #f3f4f6;
+            color: #4b5563;
+            border: 1px solid #d1d5db;
+            transition: all 0.2s;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .redo-btn:hover { background-color: #e5e7eb; color: #1f2937; }
+        .sticky-nav { position: sticky; top: 0; z-index: 50; background: rgba(15, 23, 42, 0.9); backdrop-filter: blur(8px); }
+        .khmer-text { font-family: 'Kantumruy Pro', sans-serif; }
+    </style>
+</head>
+<body class="bg-gray-100 py-10 px-4">
+
+    <div class="max-w-5xl mx-auto bg-white shadow-2xl rounded-3xl overflow-hidden border border-gray-200">
+        <!-- Header -->
+        <div class="bg-indigo-900 p-8 text-white text-center">
+            <h1 class="text-4xl font-bold mb-2 italic">Neurology & CNS Revision</h1>
+            <p class="text-xl khmer-text text-indigo-200">ប្រព័ន្ធប្រសាទ និងកាយវិភាគវិទ្យា</p>
+        </div>
+
+        <!-- Navigation Bar -->
+        <div class="sticky-nav text-white p-3 overflow-x-auto whitespace-nowrap flex gap-4 text-xs font-bold uppercase tracking-widest scrollbar-hide border-b border-indigo-800">
+            <a href="#sec-1" class="hover:text-blue-400 px-3">Cranial Nerves</a>
+            <a href="#sec-2" class="hover:text-blue-400 px-3">Functional/CNS</a>
+            <a href="#sec-3" class="hover:text-blue-400 px-3">PNS</a>
+            <a href="#sec-4" class="hover:text-blue-400 px-3">Brain Anatomy</a>
+            <a href="#sec-5" class="hover:text-blue-400 px-3">MD 3Year</a>
+            <a href="#sec-6" class="hover:text-blue-400 px-3">Nerve Plexus</a>
+            <a href="#sec-8" class="hover:text-blue-400 px-3">Reflexes</a>
+            <a href="#sec-9" class="hover:text-blue-400 px-3">Spinal Cord</a>
+        </div>
+
+        <div class="p-6 md:p-10">
+            <div id="quiz-container" class="space-y-20">
+                <!-- Sections Injected Here -->
+            </div>
+
+            <!-- Scoring Section -->
+            <div id="final-result" class="hidden mt-20 p-10 bg-slate-900 text-white rounded-3xl text-center">
+                <h2 class="text-3xl font-bold mb-4 khmer-text">លទ្ធផលសរុប (Total Score)</h2>
+                <div class="text-7xl font-black mb-4 text-indigo-400"><span id="total-score">0</span> / <span id="max-score">0</span></div>
+                <button onclick="window.scrollTo({top:0, behavior:'smooth'})" class="text-blue-400 underline font-bold">Back to Top</button>
+            </div>
+
+            <div class="mt-16 flex justify-center">
+                <button onclick="calculateScore()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-6 px-20 rounded-full shadow-2xl transform transition active:scale-95 text-2xl khmer-text">
+                    ពិនិត្យពិន្ទុសរុប (Calculate Final Score)
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const quizSections = [
+            {
+                id: 1,
+                title: "Section 1: Cranial Nerves Quiz",
+                questions: [
+                    { n: 1, q: "Which cranial nerve is responsible for the sense of smell and consists of fibers that pass through the cribriform plate of the ethmoid bone?", o: ["Optic nerve", "Olfactory nerve", "Trigeminal nerve", "Facial nerve"], a: "B" },
+                    { n: 2, q: "Which cranial nerve is responsible for vision and transmits impulses from the retina to the brain?", o: ["Olfactory nerve", "Optic nerve", "Oculomotor nerve", "Trochlear nerve"], a: "B" },
+                    { n: 3, q: "Which cranial nerve controls most of the extraocular muscles and carries parasympathetic fibers for pupillary constriction?", o: ["Trochlear nerve", "Abducens nerve", "Oculomotor nerve", "Optic nerve"], a: "C" },
+                    { n: 4, q: "Which cranial nerve innervates the superior oblique muscle of the eye?", o: ["Oculomotor nerve", "Trochlear nerve", "Abducens nerve", "Facial nerve"], a: "B" },
+                    { n: 5, q: "Which cranial nerve innervates the lateral rectus muscle and is responsible for abduction of the eye?", o: ["Oculomotor", "Trochlear", "Abducens", "Trigeminal"], a: "C" },
+                    { n: 6, q: "Which cranial nerve is the largest and has both sensory and motor components, supplying the face and muscles of mastication?", o: ["Facial nerve", "Trigeminal nerve", "Glossopharyngeal nerve", "Vagus nerve"], a: "B" },
+                    { n: 7, q: "Which cranial nerve provides motor innervation to muscles of facial expression and carries taste sensation from the anterior two-thirds of the tongue?", o: ["Trigeminal", "Facial", "Glossopharyngeal", "Hypoglossal"], a: "B" },
+                    { n: 8, q: "Which cranial nerve is responsible for hearing and balance?", o: ["Facial nerve", "Vestibulocochlear nerve", "Vagus nerve", "Accessory nerve"], a: "B" },
+                    { n: 9, q: "Which cranial nerve carries taste from the posterior one-third of the tongue and contributes to swallowing?", o: ["Facial", "Glossopharyngeal", "Vagus", "Hypoglossal"], a: "B" },
+                    { n: 10, q: "Which cranial nerve has the most extensive distribution and innervates thoracic and abdominal viscera?", o: ["Glossopharyngeal", "Vagus", "Hypoglossal", "Accessory"], a: "B" },
+                    { n: 11, q: "Which cranial nerve primarily controls movements of the tongue?", o: ["Facial", "Glossopharyngeal", "Hypoglossal", "Vagus"], a: "C" },
+                    { n: 12, q: "Which cranial nerve innervates the sternocleidomastoid and trapezius muscles?", o: ["Facial", "Vagus", "Accessory", "Hypoglossal"], a: "C" },
+                    { n: 13, q: "Which cranial nerve is purely sensory?", o: ["Trigeminal", "Facial", "Olfactory", "Vagus"], a: "C" },
+                    { n: 14, q: "Which cranial nerve is purely motor?", o: ["Trigeminal", "Facial", "Hypoglossal", "Glossopharyngeal"], a: "C" },
+                    { n: 15, q: "Which cranial nerve has four nuclei and both motor and sensory components, including parasympathetic fibers?", o: ["Facial nerve", "Trigeminal nerve", "Vagus nerve", "Glossopharyngeal nerve"], a: "B" },
+                    { n: 16, q: "Which cranial nerve is responsible for corneal reflex (sensory limb)?", o: ["Facial", "Trigeminal", "Vagus", "Optic"], a: "B" },
+                    { n: 17, q: "Which cranial nerve is responsible for corneal reflex (motor limb)?", o: ["Trigeminal", "Facial", "Oculomotor", "Abducens"], a: "B" },
+                    { n: 18, q: "Which cranial nerve is involved in the gag reflex (sensory limb)?", o: ["Facial", "Glossopharyngeal", "Vagus", "Hypoglossal"], a: "B" },
+                    { n: 19, q: "Which cranial nerve is involved in the gag reflex (motor limb)?", o: ["Glossopharyngeal", "Vagus", "Hypoglossal", "Facial"], a: "B" },
+                    { n: 20, q: "Which cranial nerve lesion leads to loss of forehead wrinkling and inability to close the eye?", o: ["Trigeminal", "Facial", "Hypoglossal", "Vagus"], a: "B" },
+                    { n: 21, q: "Which cranial nerve lesion leads to diplopia due to inability to abduct the eye?", o: ["Oculomotor", "Trochlear", "Abducens", "Optic"], a: "C" },
+                    { n: 22, q: "Which cranial nerve lesion leads to tongue deviation toward the side of lesion?", o: ["Facial", "Glossopharyngeal", "Hypoglossal", "Vagus"], a: "C" },
+                    { n: 23, q: "Which cranial nerve passes through the jugular foramen along with CN X and XI?", o: ["Facial", "Glossopharyngeal", "Trigeminal", "Hypoglossal"], a: "B" },
+                    { n: 24, q: "Which cranial nerve exits the skull via the optic canal?", o: ["Olfactory", "Optic", "Oculomotor", "Trochlear"], a: "B" },
+                    { n: 25, q: "Which cranial nerve passes through the superior orbital fissure?", o: ["Optic", "Oculomotor", "Olfactory", "Hypoglossal"], a: "B" },
+                    { n: 26, q: "Which cranial nerve has the longest intracranial course and is most susceptible to injury?", o: ["Facial", "Trochlear", "Abducens", "Vagus"], a: "C" },
+                    { n: 27, q: "Which cranial nerve is responsible for parasympathetic innervation of salivary glands via the otic ganglion?", o: ["Facial", "Glossopharyngeal", "Vagus", "Trigeminal"], a: "B" },
+                    { n: 28, q: "Which cranial nerve provides parasympathetic innervation to lacrimal gland?", o: ["Trigeminal", "Facial", "Glossopharyngeal", "Vagus"], a: "B" },
+                    { n: 29, q: "Which cranial nerve is involved in pupillary light reflex (afferent limb)?", o: ["Oculomotor", "Optic", "Trigeminal", "Facial"], a: "B" },
+                    { n: 30, q: "Which cranial nerve is involved in pupillary light reflex (efferent limb)?", o: ["Optic", "Oculomotor", "Trochlear", "Abducens"], a: "B" }
+                ]
+            },
+            {
+                id: 2,
+                title: "Section 2: Functional Divisions & CNS Components",
+                questions: [
+                    { n: 1, q: "The nervous system is classically divided into major functional components based on its role in processing and responding to stimuli. Which division is primarily responsible for detecting internal and external stimuli and transmitting this information to the central nervous system?", o: ["Motor (efferent) system", "Sensory (afferent) system", "Autonomic system", "Somatic system"], a: "B" },
+                    { n: 2, q: "Which functional division of the nervous system is responsible for transmitting commands from the central nervous system to skeletal muscles for voluntary movement?", o: ["Sensory system", "Autonomic system", "Somatic motor system", "Limbic system"], a: "C" },
+                    { n: 3, q: "The autonomic nervous system regulates involuntary physiological processes. Which of the following is a primary function of this system?", o: ["Conscious movement", "Voluntary muscle control", "Regulation of heart rate and digestion", "Visual perception"], a: "C" },
+                    { n: 4, q: "Which subdivision of the autonomic nervous system is primarily associated with \"fight or flight\" responses?", o: ["Parasympathetic", "Somatic", "Sympathetic", "Enteric"], a: "C" },
+                    { n: 5, q: "Which subdivision of the autonomic nervous system is responsible for \"rest and digest\" functions?", o: ["Sympathetic", "Parasympathetic", "Somatic", "Central"], a: "B" },
+                    { n: 6, q: "The nervous system integrates sensory input to produce appropriate responses. Which structure is primarily responsible for higher-level integration, cognition, and decision-making?", o: ["Brainstem", "Spinal cord", "Cerebrum", "Cerebellum"], a: "C" },
+                    { n: 7, q: "Which part of the nervous system is responsible for coordinating voluntary movements and maintaining balance and posture?", o: ["Cerebrum", "Cerebellum", "Brainstem", "Thalamus"], a: "B" },
+                    { n: 8, q: "Which structure is primarily responsible for maintaining vital functions such as respiration and cardiovascular regulation?", o: ["Cerebellum", "Brainstem", "Cerebrum", "Limbic system"], a: "B" },
+                    { n: 9, q: "Which functional component of the nervous system is responsible for rapid, automatic responses to stimuli without conscious thought?", o: ["Voluntary motor system", "Reflex arc", "Limbic system", "Cerebral cortex"], a: "B" },
+                    { n: 10, q: "Which function of the nervous system involves processing and interpreting sensory input to generate perception?", o: ["Sensory input", "Motor output", "Integration", "Reflex"], a: "C" },
+                    { n: 11, q: "Which type of neurons carry impulses from sensory receptors toward the central nervous system?", o: ["Motor neurons", "Interneurons", "Sensory (afferent) neurons", "Autonomic neurons"], a: "C" },
+                    { n: 12, q: "Which type of neurons transmit signals from the central nervous system to muscles and glands?", o: ["Sensory neurons", "Motor (efferent) neurons", "Interneurons", "Association neurons"], a: "B" },
+                    { n: 13, q: "Which system is primarily responsible for emotional processing, memory, and behavioral responses?", o: ["Somatic system", "Autonomic system", "Limbic system", "Sensory system"], a: "C" },
+                    { n: 14, q: "Which part of the nervous system allows conscious awareness of sensory stimuli?", o: ["Spinal cord", "Brainstem", "Cerebral cortex", "Cerebellum"], a: "C" },
+                    { n: 15, q: "Which functional division of the nervous system controls smooth muscle, cardiac muscle, and glandular activity?", o: ["Somatic", "Sensory", "Autonomic", "Motor"], a: "C" },
+                    { n: 16, q: "Which system within the nervous system is specifically adapted to regulate gastrointestinal function independently?", o: ["Sympathetic", "Parasympathetic", "Enteric", "Somatic"], a: "C" },
+                    { n: 17, q: "Which function of the nervous system involves generating a response after processing sensory input?", o: ["Sensory input", "Integration", "Motor output", "Reflex"], a: "C" },
+                    { n: 18, q: "Which component of the nervous system is responsible for linking sensory and motor pathways within the central nervous system?", o: ["Motor neurons", "Sensory neurons", "Interneurons", "Autonomic neurons"], a: "C" },
+                    { n: 19, q: "Which system ensures rapid transmission of signals for voluntary movement and reflex actions?", o: ["Endocrine system", "Nervous system", "Circulatory system", "Respiratory system"], a: "B" },
+                    { n: 20, q: "Which functional property of the nervous system allows it to detect changes in the environment and initiate responses?", o: ["Plasticity", "Excitability", "Inhibition", "Adaptation"], a: "B" },
+                    { n: 21, q: "The central nervous system is composed of two main anatomical structures responsible for integration and control of body functions. Which structures constitute the CNS?", o: ["Brain and peripheral nerves", "Brain and spinal cord", "Spinal cord and ganglia", "Brainstem and cerebellum"], a: "B" },
+                    { n: 22, q: "Which component of the CNS is primarily responsible for higher cognitive functions such as reasoning, planning, and voluntary control of movement?", o: ["Cerebellum", "Brainstem", "Cerebrum", "Spinal cord"], a: "C" },
+                    { n: 23, q: "Which part of the CNS is responsible for coordinating movement, balance, and posture?", o: ["Cerebrum", "Brainstem", "Cerebellum", "Thalamus"], a: "C" },
+                    { n: 24, q: "Which CNS structure is responsible for basic life-sustaining functions such as respiration and heart rate?", o: ["Cerebellum", "Brainstem", "Cerebrum", "Spinal cord"], a: "B" },
+                    { n: 25, q: "The spinal cord is a component of the CNS that primarily functions in conduction and reflexes. Which function best describes its role?", o: ["Hormonal regulation", "Reflex activity and signal conduction", "Memory processing", "Visual perception"], a: "B" },
+                    { n: 26, q: "Which part of the CNS serves as a relay center for sensory information before it reaches the cortex?", o: ["Hypothalamus", "Thalamus", "Cerebellum", "Brainstem"], a: "B" },
+                    { n: 27, q: "Which CNS structure is involved in maintaining homeostasis and regulating endocrine functions?", o: ["Thalamus", "Hypothalamus", "Cerebellum", "Pons"], a: "B" },
+                    { n: 28, q: "Which type of tissue in the CNS contains neuron cell bodies and is responsible for processing information?", o: ["White matter", "Gray matter", "CSF", "Pia mater"], a: "B" },
+                    { n: 29, q: "Which type of CNS tissue is primarily composed of myelinated axons responsible for signal transmission?", o: ["Gray matter", "White matter", "Dura mater", "Ventricular system"], a: "B" },
+                    { n: 30, q: "Which protective covering of the CNS is the outermost and toughest?", o: ["Pia mater", "Arachnoid mater", "Dura mater", "Subarachnoid space"], a: "C" },
+                    { n: 31, q: "Which space within the CNS contains cerebrospinal fluid that cushions and protects neural tissue?", o: ["Epidural space", "Subdural space", "Subarachnoid space", "Intracellular space"], a: "C" },
+                    { n: 32, q: "Which structure produces cerebrospinal fluid within the CNS?", o: ["Arachnoid villi", "Choroid plexus", "Pia mater", "Dura mater"], a: "B" },
+                    { n: 33, q: "Which structure reabsorbs cerebrospinal fluid into the venous system?", o: ["Choroid plexus", "Arachnoid granulations", "Cerebral aqueduct", "Ventricles"], a: "B" },
+                    { n: 34, q: "Which CNS component is responsible for conscious awareness of sensory input?", o: ["Spinal cord", "Brainstem", "Cerebral cortex", "Cerebellum"], a: "C" },
+                    { n: 35, q: "Which CNS structure contains ascending and descending tracts responsible for transmitting signals between brain and body?", o: ["Cerebellum", "Spinal cord", "Hypothalamus", "Thalamus"], a: "B" },
+                    { n: 36, q: "Which part of the CNS is involved in emotional processing and memory?", o: ["Brainstem", "Limbic system", "Cerebellum", "Spinal cord"], a: "B" },
+                    { n: 37, q: "Which structure connects the two cerebral hemispheres within the CNS?", o: ["Internal capsule", "Corpus callosum", "Brainstem", "Thalamus"], a: "B" },
+                    { n: 38, q: "Which functional system within the CNS regulates involuntary functions such as heart rate and digestion?", o: ["Somatic system", "Autonomic system", "Sensory system", "Motor cortex"], a: "B" },
+                    { n: 39, q: "Which CNS region is responsible for coordination of fine voluntary movements?", o: ["Brainstem", "Cerebellum", "Thalamus", "Hypothalamus"], a: "B" },
+                    { n: 40, q: "Which structure within the CNS is most involved in relaying motor signals from the cerebellum and basal ganglia to the cortex?", o: ["Hypothalamus", "Thalamus", "Medulla", "Pons"], a: "B" },
+                    { n: 41, q: "Which CNS structure is most vulnerable to ischemia due to high metabolic demand?", o: ["Cerebellum", "Hippocampus", "Pons", "Medulla"], a: "B" },
+                    { n: 42, q: "Which CNS structure is primarily responsible for initiating voluntary motor activity?", o: ["Cerebellum", "Precentral gyrus", "Postcentral gyrus", "Thalamus"], a: "B" },
+                    { n: 43, q: "Which CNS region processes somatosensory information?", o: ["Frontal lobe", "Parietal lobe", "Temporal lobe", "Occipital lobe"], a: "B" },
+                    { n: 44, q: "Which CNS region is primarily responsible for visual processing?", o: ["Frontal lobe", "Temporal lobe", "Parietal lobe", "Occipital lobe"], a: "D" },
+                    { n: 45, q: "Which CNS region is responsible for auditory processing?", o: ["Frontal lobe", "Temporal lobe", "Parietal lobe", "Occipital lobe"], a: "B" },
+                    { n: 46, q: "Which CNS structure is responsible for maintaining posture and equilibrium?", o: ["Cerebrum", "Cerebellum", "Thalamus", "Brainstem"], a: "B" },
+                    { n: 47, q: "Which CNS structure connects the brain to the spinal cord?", o: ["Cerebellum", "Brainstem", "Thalamus", "Hypothalamus"], a: "B" },
+                    { n: 48, q: "Which CNS structure contains cranial nerve nuclei?", o: ["Cerebrum", "Cerebellum", "Brainstem", "Spinal cord"], a: "C" },
+                    { n: 49, q: "Which CNS structure is involved in circadian rhythm regulation?", o: ["Thalamus", "Hypothalamus", "Cerebellum", "Medulla"], a: "B" },
+                    { n: 50, q: "Which CNS structure is responsible for integrating sensory input and producing motor output?", o: ["Cerebellum", "Spinal cord", "Brainstem", "Entire CNS"], a: "D" }
+                ]
+            },
+            {
+                id: 3,
+                title: "Section 3: Peripheral Nervous System Quiz",
+                questions: [
+                    { n: 51, q: "In the peripheral nervous system, myelination differs from that in the central nervous system in both structure and cellular origin. Which statement best describes this difference?", o: ["Myelin is produced by oligodendrocytes and covers one axon segment", "Schwann cells myelinate multiple axons simultaneously", "Each Schwann cell myelinates a single segment of one axon", "Myelin is absent in the peripheral nervous system"], a: "C" },
+                    { n: 52, q: "Which functional division of the PNS is responsible for transmitting sensory information from receptors to the CNS?", o: ["Somatic motor", "Autonomic motor", "Sensory (afferent) division", "Enteric division"], a: "C" },
+                    { n: 53, q: "Which division of the PNS is responsible for voluntary control of skeletal muscles?", o: ["Autonomic nervous system", "Somatic nervous system", "Enteric nervous system", "Sensory system"], a: "B" },
+                    { n: 54, q: "The autonomic nervous system is a subdivision of the PNS. Which of the following is a primary function of this system?", o: ["Conscious movement", "Processing visual input", "Regulation of involuntary functions", "Language comprehension"], a: "C" },
+                    { n: 55, q: "Which subdivision of the autonomic nervous system is associated with \"fight or flight\" responses?", o: ["Parasympathetic", "Sympathetic", "Enteric", "Somatic"], a: "B" },
+                    { n: 56, q: "Which subdivision of the autonomic nervous system is associated with \"rest and digest\" functions?", o: ["Sympathetic", "Parasympathetic", "Somatic", "Sensory"], a: "B" },
+                    { n: 57, q: "Which component of the PNS is specifically adapted to regulate gastrointestinal activity independently of the CNS?", o: ["Somatic system", "Sympathetic system", "Enteric nervous system", "Sensory system"], a: "C" },
+                    { n: 58, q: "Cranial nerves are part of the PNS. How many pairs of cranial nerves are present in humans?", o: ["10", "11", "12", "13"], a: "C" },
+                    { n: 59, q: "Spinal nerves emerge from the spinal cord. How many pairs of spinal nerves are present?", o: ["12", "24", "31", "33"], a: "C" },
+                    { n: 60, q: "Each spinal nerve is formed by the union of which two roots?", o: ["Motor and autonomic", "Dorsal and ventral roots", "Sensory and autonomic", "Cranial and spinal roots"], a: "B" },
+                    { n: 61, q: "Which root of the spinal nerve carries sensory fibers into the spinal cord?", o: ["Ventral root", "Dorsal root", "Mixed root", "Autonomic root"], a: "B" },
+                    { n: 62, q: "Which root of the spinal nerve carries motor fibers out of the spinal cord?", o: ["Dorsal root", "Ventral root", "Sensory root", "Mixed root"], a: "B" },
+                    { n: 63, q: "Where are the cell bodies of sensory neurons located in the PNS?", o: ["Anterior horn", "Posterior horn", "Dorsal root ganglion", "Lateral horn"], a: "C" },
+                    { n: 64, q: "Which type of neuron transmits impulses from the CNS to muscles and glands?", o: ["Sensory neuron", "Motor neuron", "Interneuron", "Association neuron"], a: "B" },
+                    { n: 65, q: "Which type of neuron carries impulses from sensory receptors toward the CNS?", o: ["Motor neuron", "Sensory neuron", "Interneuron", "Autonomic neuron"], a: "B" },
+                    { n: 66, q: "Which part of the PNS is responsible for reflex actions at the level of the spinal cord?", o: ["Cranial nerves", "Spinal nerves", "Brainstem", "Cerebellum"], a: "B" },
+                    { n: 67, q: "Which connective tissue layer surrounds individual nerve fibers?", o: ["Epineurium", "Perineurium", "Endoneurium", "Dura mater"], a: "C" },
+                    { n: 68, q: "Which connective tissue layer surrounds bundles (fascicles) of nerve fibers?", o: ["Epineurium", "Perineurium", "Endoneurium", "Pia mater"], a: "B" },
+                    { n: 69, q: "Which connective tissue layer surrounds the entire nerve?", o: ["Endoneurium", "Perineurium", "Epineurium", "Arachnoid"], a: "C" },
+                    { n: 70, q: "Which cells are responsible for myelination in the PNS?", o: ["Oligodendrocytes", "Astrocytes", "Schwann cells", "Microglia"], a: "C" },
+                    { n: 71, q: "Which structure is formed by the branching of spinal nerves to supply specific regions of the body?", o: ["Ganglion", "Plexus", "Nucleus", "Tract"], a: "B" },
+                    { n: 72, q: "Which plexus supplies the upper limb?", o: ["Lumbar plexus", "Sacral plexus", "Cervical plexus", "Brachial plexus"], a: "D" },
+                    { n: 73, q: "Which plexus supplies the lower limb?", o: ["Cervical plexus", "Brachial plexus", "Lumbar and sacral plexuses", "Thoracic plexus"], a: "C" },
+                    { n: 74, q: "Which nerves are NOT part of a plexus and run directly as intercostal nerves?", o: ["Cervical nerves", "Thoracic nerves", "Lumbar nerves", "Sacral nerves"], a: "B" },
+                    { n: 75, q: "Which functional component of the PNS controls skeletal muscle activity?", o: ["Autonomic system", "Somatic motor system", "Sensory system", "Enteric system"], a: "B" },
+                    { n: 76, q: "Which system controls smooth muscle, cardiac muscle, and glandular secretion?", o: ["Somatic", "Sensory", "Autonomic", "Motor cortex"], a: "C" },
+                    { n: 77, q: "Which type of ganglia are associated with the autonomic nervous system?", o: ["Sensory ganglia only", "Motor ganglia", "Autonomic ganglia", "Spinal ganglia only"], a: "C" },
+                    { n: 78, q: "Which functional property allows PNS neurons to respond to stimuli?", o: ["Conductivity", "Excitability", "Plasticity", "Adaptation"], a: "B" },
+                    { n: 79, q: "Which property allows nerve fibers to transmit impulses along their length?", o: ["Excitability", "Conductivity", "Plasticity", "Integration"], a: "B" },
+                    { n: 80, q: "Which system allows rapid communication between the body and the CNS for both voluntary and involuntary actions?", o: ["Endocrine system", "Peripheral nervous system", "Circulatory system", "Respiratory system"], a: "B" }
+                ]
+            },
+            {
+                id: 4,
+                title: "Section 4: Brain Anatomy & Functions Quiz",
+                questions: [
+                    { n: 1, q: "The longitudinal fissure divides the brain into two hemispheres. Which structure lies within this fissure and connects the hemispheres?", o: ["Thalamus", "Corpus callosum", "Brainstem", "Cerebellum"], a: "B" },
+                    { n: 2, q: "Which structure is primarily responsible for coordinating voluntary movements and maintaining balance through integration of sensory and motor pathways?", o: ["Cerebrum", "Thalamus", "Cerebellum", "Hypothalamus"], a: "C" },
+                    { n: 3, q: "Which structure separates cerebrum from cerebellum?", o: ["Falx cerebri", "Tentorium cerebelli", "Diaphragma sellae", "Falx cerebelli"], a: "B" },
+                    { n: 4, q: "Which structure is involved in memory consolidation?", o: ["Amygdala", "Hippocampus", "Thalamus", "Cerebellum"], a: "B" },
+                    { n: 5, q: "Which structure is involved in memory consolidation?", o: ["Amygdala", "Hippocampus", "Thalamus", "Cerebellum"], a: "B" },
+                    { n: 6, q: "Which structure separates the two cerebral hemispheres?", o: ["Tentorium cerebelli", "Falx cerebri", "Falx cerebelli", "Diaphragma sellae"], a: "B" },
+                    { n: 7, q: "Which lobe of the brain is primarily responsible for voluntary motor control?", o: ["Temporal", "Parietal", "Frontal", "Occipital"], a: "C" },
+                    { n: 8, q: "Which lobe is mainly involved in processing visual information?", o: ["Frontal", "Parietal", "Temporal", "Occipital"], a: "D" },
+                    { n: 9, q: "The meninges are protective coverings of the central nervous system arranged in layers. Which layer is the toughest and most external, providing mechanical protection?", o: ["Pia mater", "Arachnoid mater", "Dura mater", "Subdural space"], a: "C" },
+                    { n: 10, q: "Which meningeal layer is thin, avascular, and lies between the dura mater and pia mater, forming a potential space beneath it?", o: ["Dura mater", "Arachnoid mater", "Pia mater", "Epidural layer"], a: "B" },
+                    { n: 11, q: "Which meningeal layer is closely adherent to the surface of the brain and follows all gyri and sulci?", o: ["Dura mater", "Arachnoid mater", "Pia mater", "Subdural layer"], a: "C" },
+                    { n: 12, q: "The subarachnoid space contains cerebrospinal fluid and blood vessels. Between which layers is this space located?", o: ["Dura and arachnoid", "Arachnoid and pia", "Pia and brain", "Dura and skull"], a: "B" },
+                    { n: 13, q: "Which space is considered a potential space between the dura mater and arachnoid mater?", o: ["Epidural space", "Subdural space", "Subarachnoid space", "Ventricular space"], a: "B" },
+                    { n: 14, q: "Which meningeal space contains cerebrospinal fluid under normal physiological conditions?", o: ["Epidural space", "Subdural space", "Subarachnoid space", "Intracerebral space"], a: "C" },
+                    { n: 15, q: "The dura mater in the cranial cavity consists of two layers. What are these layers?", o: ["Periosteal and meningeal layers", "Arachnoid and pia layers", "Neural and vascular layers", "External and internal layers"], a: "A" },
+                    { n: 16, q: "Which dural reflection separates the two cerebral hemispheres?", o: ["Tentorium cerebelli", "Falx cerebri", "Falx cerebelli", "Diaphragma sellae"], a: "B" },
+                    { n: 17, q: "Which dural fold separates the cerebrum from the cerebellum?", o: ["Falx cerebri", "Tentorium cerebelli", "Falx cerebelli", "Diaphragma sellae"], a: "B" },
+                    { n: 18, q: "Which dural fold separates the two cerebellar hemispheres?", o: ["Falx cerebri", "Tentorium cerebelli", "Falx cerebelli", "Sellar diaphragm"], a: "C" },
+                    { n: 19, q: "The ventricular system of the brain consists of interconnected cavities filled with cerebrospinal fluid. Which ventricles are located within the cerebral hemispheres?", o: ["Third ventricles", "Fourth ventricles", "Lateral ventricles", "Central canal"], a: "C" },
+                    { n: 20, q: "Each lateral ventricle communicates with the third ventricle through a specific opening. What is the name of this structure?", o: ["Cerebral aqueduct", "Foramen of Monro", "Central canal", "Foramen of Luschka"], a: "B" },
+                    { n: 21, q: "The third ventricle is a narrow midline cavity located between which major brain structures?", o: ["Cerebral hemispheres", "Cerebellar hemispheres", "Thalami", "Brainstem nuclei"], a: "C" },
+                    { n: 22, q: "The cerebral aqueduct connects which two ventricles within the brain?", o: ["Lateral to third", "Third to fourth", "Fourth to central canal", "Lateral to fourth"], a: "B" },
+                    { n: 23, q: "The fourth ventricle is anatomically positioned between which two major structures?", o: ["Cerebrum and thalamus", "Cerebellum and brainstem", "Cerebrum and cerebellum", "Thalamus and hypothalamus"], a: "B" },
+                    { n: 24, q: "Cerebrospinal fluid exits the fourth ventricle into the subarachnoid space through which apertures?", o: ["Foramen of Monro", "Aqueduct of Sylvius", "Foramina of Luschka and Magendie", "Central canal"], a: "C" },
+                    { n: 25, q: "Which part of the lateral ventricle extends into the temporal lobe?", o: ["Anterior horn", "Posterior horn", "Inferior horn", "Body"], a: "C" },
+                    { n: 26, q: "Which part of the lateral ventricle extends into the frontal lobe?", o: ["Body", "Inferior horn", "Anterior horn", "Posterior horn"], a: "C" },
+                    { n: 27, q: "Which part of the lateral ventricle extends into the occipital lobe?", o: ["Body", "Posterior horn", "Inferior horn", "Anterior horn"], a: "B" },
+                    { n: 28, q: "Which structure forms the roof of the third ventricle?", o: ["Thalamus", "Hypothalamus", "Corpus callosum", "Brainstem"], a: "C" },
+                    { n: 29, q: "Which structure forms the floor of the third ventricle?", o: ["Thalamus", "Hypothalamus", "Cerebellum", "Corpus callosum"], a: "B" },
+                    { n: 30, q: "Which structure forms the lateral walls of the third ventricle?", o: ["Hypothalamus", "Thalamus", "Cerebellum", "Brainstem"], a: "B" },
+                    { n: 31, q: "Which structure forms the floor of the fourth ventricle?", o: ["Cerebellum", "Brainstem (pons and medulla)", "Thalamus", "Corpus callosum"], a: "B" },
+                    { n: 32, q: "Which structure forms the roof of the fourth ventricle?", o: ["Brainstem", "Cerebellum", "Thalamus", "Hypothalamus"], a: "B" },
+                    { n: 33, q: "Cerebrospinal fluid is produced mainly by which structure within the ventricles?", o: ["Arachnoid villi", "Choroid plexus", "Dura mater", "Pia mater"], a: "B" },
+                    { n: 34, q: "Which mechanism is responsible for the absorption of cerebrospinal fluid into the venous system?", o: ["Choroid plexus", "Arachnoid granulations", "Ventricular walls", "Dura mater"], a: "B" },
+                    { n: 35, q: "Which condition results from obstruction of CSF flow within the ventricular system leading to ventricular enlargement?", o: ["Meningitis", "Hydrocephalus", "Encephalitis", "Stroke"], a: "B" },
+                    { n: 36, q: "Which ventricular structure continues inferiorly as the central canal of the spinal cord?", o: ["Lateral ventricle", "Third ventricle", "Fourth ventricle", "Aqueduct"], a: "C" },
+                    { n: 37, q: "What is the approximate daily production rate of CSF?", o: ["50 mL/day", "150 mL/day", "500 mL/day", "1000 mL/day"], a: "C" },
+                    { n: 38, q: "Which function is NOT a role of cerebrospinal fluid?", o: ["Mechanical protection", "Nutrient transport", "Hormone production", "Waste removal"], a: "C" },
+                    { n: 39, q: "The limbic system is a complex network of cortical and subcortical structures involved in emotion, behavior, and memory. Which structure is primarily responsible for memory consolidation and spatial navigation?", o: ["Amygdala", "Hippocampus", "Thalamus", "Hypothalamus"], a: "B" },
+                    { n: 40, q: "Which limbic structure plays a central role in emotional processing, particularly fear, aggression, and threat detection?", o: ["Hippocampus", "Amygdala", "Cingulate gyrus", "Fornix"], a: "B" },
+                    { n: 41, q: "Which structure connects the limbic system to the endocrine system, allowing emotional states to influence hormonal responses?", o: ["Thalamus", "Hypothalamus", "Cerebellum", "Pons"], a: "B" },
+                    { n: 42, q: "The diencephalon is a central brain structure located between the cerebral hemispheres and the brainstem. Which major components constitute the diencephalon?", o: ["Cerebellum and brainstem", "Thalamus, hypothalamus, epithalamus, subthalamus", "Frontal and parietal lobes", "Midbrain and pons"], a: "B" },
+                    { n: 43, q: "Which component of the diencephalon acts as the principal relay station for sensory information to the cerebral cortex?", o: ["Hypothalamus", "Epithalamus", "Thalamus", "Subthalamus"], a: "C" },
+                    { n: 44, q: "Which part of the diencephalon is primarily responsible for maintaining homeostasis and regulating autonomic and endocrine functions?", o: ["Thalamus", "Hypothalamus", "Epithalamus", "Subthalamus"], a: "B" },
+                    { n: 45, q: "The third ventricle is closely associated with the diencephalon. Which structure forms its lateral walls?", o: ["Cerebellum", "Thalamus", "Hypothalamus", "Brainstem"], a: "B" },
+                    { n: 46, q: "Which structure of the diencephalon contains the pineal gland and is involved in circadian rhythm regulation?", o: ["Thalamus", "Hypothalamus", "Epithalamus", "Subthalamus"], a: "C" },
+                    { n: 47, q: "Which part of the diencephalon is functionally associated with motor control and is closely related to the basal ganglia?", o: ["Thalamus", "Hypothalamus", "Epithalamus", "Subthalamus"], a: "D" },
+                    { n: 48, q: "Which structure of the hypothalamus connects it to the pituitary gland?", o: ["Corpus callosum", "Fornix", "Infundibulum", "Optic chiasm"], a: "C" },
+                    { n: 49, q: "Which diencephalic structure forms the floor of the third ventricle?", o: ["Thalamus", "Hypothalamus", "Epithalamus", "Subthalamus"], a: "B" },
+                    { n: 50, q: "Which diencephalic structure is located superior to the hypothalamus and forms the bulk of the lateral walls of the third ventricle?", o: ["Epithalamus", "Subthalamus", "Thalamus", "Brainstem"], a: "C" },
+                    { n: 52, q: "Which part of the diencephalon is directly involved in regulating body temperature, hunger, thirst, and circadian rhythms?", o: ["Thalamus", "Hypothalamus", "Epithalamus", "Subthalamus"], a: "B" },
+                    { n: 53, q: "Which structure within the diencephalon serves as a major integration center for emotional and autonomic responses through its connection with the limbic system?", o: ["Thalamus", "Hypothalamus", "Epithalamus", "Subthalamus"], a: "B" },
+                    { n: 54, q: "Which part of the diencephalon is involved in relaying motor signals from the cerebellum and basal ganglia to the cerebral cortex?", o: ["Hypothalamus", "Thalamus", "Epithalamus", "Subthalamus"], a: "B" },
+                    { n: 55, q: "Which anatomical structure of the diencephalon contains the habenular nuclei and plays a role in emotional and reward processing?", o: ["Thalamus", "Hypothalamus", "Epithalamus", "Subthalamus"], a: "C" },
+                    { n: 56, q: "Which structure is located anteriorly in the diencephalon and is involved in visual pathway crossing?", o: ["Optic tract", "Optic chiasm", "Pineal gland", "Fornix"], a: "B" },
+                    { n: 57, q: "Which diencephalic structure is most directly involved in integrating sensory input and projecting it to specific cortical areas for conscious perception?", o: ["Hypothalamus", "Epithalamus", "Thalamus", "Subthalamus"], a: "C" },
+                    { n: 58, q: "The brainstem is a vital structure connecting the cerebrum to the spinal cord and is composed of three major parts arranged from superior to inferior. Which sequence correctly represents this anatomical order?", o: ["Medulla → Pons → Midbrain", "Midbrain → Pons → Medulla", "Pons → Medulla → Midbrain", "Midbrain → Medulla → Pons"], a: "B" },
+                    { n: 59, q: "Which part of the brainstem contains the cerebral peduncles and plays a major role in motor pathway transmission?", o: ["Medulla oblongata", "Pons", "Midbrain", "Cerebellum"], a: "C" },
+                    { n: 60, q: "Which structure of the brainstem contains nuclei responsible for regulating respiration, heart rate, and blood pressure?", o: ["Midbrain", "Pons", "Medulla oblongata", "Thalamus"], a: "C" },
+                    { n: 61, q: "The pons functions as a bridge connecting different parts of the brain. Which structure does it primarily connect with the cerebellum?", o: ["Cerebral peduncles", "Middle cerebellar peduncles", "Inferior cerebellar peduncles", "Superior cerebellar peduncles"], a: "B" },
+                    { n: 62, q: "Which cranial nerve nuclei are located within the brainstem?", o: ["I-II", "III-XII", "I-XII", "Only V-VIII"], a: "B" },
+                    { n: 63, q: "Which part of the brainstem contains the substantia nigra, which is involved in motor control and dopamine production?", o: ["Medulla", "Pons", "Midbrain", "Cerebellum"], a: "C" },
+                    { n: 64, q: "Which structure within the brainstem is involved in visual reflexes and eye movement control?", o: ["Pons", "Medulla", "Midbrain", "Thalamus"], a: "C" },
+                    { n: 65, q: "Which brainstem structure forms the floor of the fourth ventricle along with the medulla?", o: ["Midbrain", "Cerebellum", "Pons", "Thalamus"], a: "C" },
+                    { n: 66, q: "Which part of the brainstem contains the pyramidal decussation where corticospinal fibers cross?", o: ["Midbrain", "Pons", "Medulla oblongata", "Thalamus"], a: "C" },
+                    { n: 67, q: "Which structure of the brainstem is responsible for auditory reflexes through the inferior colliculus?", o: ["Medulla", "Pons", "Midbrain", "Cerebellum"], a: "C" },
+                    { n: 68, q: "Which part of the brainstem is primarily involved in regulating sleep and arousal through the reticular formation?", o: ["Medulla", "Pons", "Midbrain", "All parts"], a: "D" },
+                    { n: 69, q: "Which cerebellar peduncle connects the cerebellum to the medulla?", o: ["Superior cerebellar peduncle", "Middle cerebellar peduncle", "Inferior cerebellar peduncle", "None"], a: "C" },
+                    { n: 70, q: "Which part of the brainstem contains nuclei of cranial nerves V, VI, VII, and VIII?", o: ["Midbrain", "Pons", "Medulla", "Thalamus"], a: "B" },
+                    { n: 71, q: "Which part of the brainstem contains nuclei of cranial nerves IX, X, XI, and XII?", o: ["Midbrain", "Pons", "Medulla", "Cerebellum"], a: "C" },
+                    { n: 72, q: "Which major function is shared by all parts of the brainstem?", o: ["Hormone production", "Visual processing only", "Conduction of ascending and descending tracts", "Memory storage"], a: "C" },
+                    { n: 72, q: "The cerebellum is anatomically located in the posterior cranial fossa and plays a key role in coordination of movement. Which structure separates the cerebellum from the occipital lobes of the cerebrum?", o: ["Falx cerebri", "Tentorium cerebelli", "Falx cerebelli", "Diaphragma sellae"], a: "B" },
+                    { n: 73, q: "The cerebellum is divided into hemispheres and a central midline structure. What is the name of this central structure?", o: ["Vermis", "Peduncle", "Tonsil", "Nodule"], a: "A" },
+                    { n: 74, q: "Which functional division of the cerebellum is primarily involved in balance and control of axial muscles?", o: ["Cerebrocerebellum", "Spinocerebellum", "Vestibulocerebellum", "Neocerebellum"], a: "C" },
+                    { n: 75, q: "Which cerebellar division is most involved in fine motor coordination of distal limb movements?", o: ["Vestibulocerebellum", "Spinocerebellum", "Cerebrocerebellum", "Flocculonodular lobe"], a: "C" },
+                    { n: 76, q: "The cerebellum communicates with other parts of the brain via three pairs of peduncles. Which peduncle connects the cerebellum to the pons?", o: ["Superior cerebellar peduncle", "Middle cerebellar peduncle", "Inferior cerebellar peduncle", "Medullary peduncle"], a: "B" },
+                    { n: 77, q: "Which cerebellar peduncle primarily carries output signals from the cerebellum to the midbrain and thalamus?", o: ["Inferior cerebellar peduncle", "Middle cerebellar peduncle", "Superior cerebellar peduncle", "None"], a: "C" },
+                    { n: 78, q: "Which deep cerebellar nucleus is the largest and most important for motor planning and coordination?", o: ["Fastigial nucleus", "Globose nucleus", "Emboliform nucleus", "Dentate nucleus"], a: "D" },
+                    { n: 79, q: "Which cerebellar lobe is most closely associated with vestibular function and balance?", o: ["Anterior lobe", "Posterior lobe", "Flocculonodular lobe", "Vermis"], a: "C" },
+                    { n: 80, q: "Which type of neurons are the principal output neurons of the cerebellar cortex?", o: ["Granule cells", "Basket cells", "Purkinje cells", "Stellate cells"], a: "C" },
+                    { n: 81, q: "Which clinical feature is most characteristic of cerebellar dysfunction?", o: ["Paralysis", "Sensory loss", "Ataxia and coordination deficits", "Aphasia"], a: "C" }
+                ]
+            },
+            {
+                id: 5,
+                title: "MD 3year Brain Anatomy & Function Quiz",
+                questions: [
+                    { n: 1, q: "Which is the largest part of the human brain?", o: ["Cerebellum", "Medulla oblongata", "Cerebrum", "Thalamus"], a: "C" },
+                    { n: 2, q: "How many main lobes are found in each cerebral hemisphere?", o: ["Two", "Three", "Four", "Five"], a: "C" },
+                    { n: 3, q: "Which part of the brain is primarily responsible for balance, posture, and muscle coordination?", o: ["Cerebrum", "Cerebellum", "Pons", "Hypothalamus"], a: "B" },
+                    { n: 4, q: "Which structure connects the left and right hemispheres of the brain?", o: ["Brainstem", "Corpus callosum", "Hippocampus", "Central sulcus"], a: "B" },
+                    { n: 5, q: "The primary visual processing center is located in which lobe?", o: ["Frontal lobe", "Parietal lobe", "Temporal lobe", "Occipital lobe"], a: "D" },
+                    { n: 6, q: "Which part of the brainstem regulates basic life functions like breathing and heart rate?", o: ["Midbrain", "Pons", "Medulla oblongata", "Thalamus"], a: "C" },
+                    { n: 7, q: "The \"master gland\" of the endocrine system, the pituitary, is controlled by which brain structure?", o: ["Amygdala", "Hypothalamus", "Hippocampus", "Pineal gland"], a: "B" },
+                    { n: 8, q: "Which lobe is most closely associated with personality, decision-making, and voluntary movement?", o: ["Frontal lobe", "Parietal lobe", "Temporal lobe", "Occipital lobe"], a: "A" },
+                    { n: 9, q: "Roughly how many neurons are contained in the adult human brain?", o: ["1 billion", "50 billion", "86 billion", "250 billion"], a: "C" },
+                    { n: 10, q: "Which area of the brain is specifically responsible for the production of speech?", o: ["Wernicke's area", "Broca's area", "Basal ganglia", "Substantia nigra"], a: "B" },
+                    { n: 11, q: "What is the name of the thin, wrinkled outer layer of the cerebrum where high-level processing occurs?", o: ["White matter", "Cerebral cortex", "Meninges", "Myelin sheath"], a: "B" },
+                    { n: 12, q: "Which part of the limbic system is primarily involved in forming new memories?", o: ["Amygdala", "Hippocampus", "Thalamus", "Fornix"], a: "B" },
+                    { n: 13, q: "The protective membranes that surround the brain and spinal cord are called the:", o: ["Glia", "Ventricles", "Meninges", "Sulci"], a: "C" },
+                    { n: 14, q: "Which structure acts as a \"relay station,\" directing sensory information to the correct parts of the cortex?", o: ["Thalamus", "Hypothalamus", "Cerebellum", "Pons"], a: "A" },
+                    { n: 15, q: "What fluid cushions the brain within the skull and circulates through its ventricles?", o: ["Lymphatic fluid", "Synovial fluid", "Cerebrospinal fluid (CSF)", "Interstitial fluid"], a: "C" },
+                    { n: 16, q: "Which lobe is primarily responsible for processing auditory information and language comprehension?", o: ["Frontal lobe", "Parietal lobe", "Temporal lobe", "Occipital lobe"], a: "C" },
+                    { n: 17, q: "The amygdala is most famous for its role in processing which emotion?", o: ["Joy", "Fear", "Sadness", "Disgust"], a: "B" },
+                    { n: 18, q: "What do we call the fatty substance that insulates axons and speeds up electrical signals?", o: ["Gray matter", "Dendrite", "Myelin sheath", "Synapse"], a: "C" },
+                    { n: 19, q: "Which part of the brain is considered the \"emotional brain\"?", o: ["Brainstem", "Limbic system", "Cerebral cortex", "Basal ganglia"], a: "B" },
+                    { n: 20, q: "The gap between two neurons where chemical signals are transmitted is called the:", o: ["Axon", "Node of Ranvier", "Dendrite", "Synapse"], a: "D" }
+                ]
+            },
+            {
+                id: 6,
+                title: "Nerve Plexus Anatomy Quiz",
+                questions: [
+                    { n: 1, q: "Which spinal nerve roots typically form the cervical plexus?", o: ["C1-C4", "C5-T1", "L1-L4", "S1-S4"], a: "A" },
+                    { n: 2, q: "The phrenic nerve, which innervates the diaphragm, primarily arises from which spinal levels?", o: ["C1-C2", "C3-C5", "C5-C7", "T1-T2"], a: "B" },
+                    { n: 3, q: "Which of the following is the correct sequence of the brachial plexus from proximal to distal?", o: ["Trunks, Roots, Cords, Divisions, Branches", "Roots, Trunks, Divisions, Cords, Branches", "Roots, Divisions, Trunks, Cords, Branches", "Cords, Trunks, Roots, Divisions, Branches"], a: "B" },
+                    { n: 4, q: "Damage to the upper trunk of the brachial plexus (C5-C6) typically results in which clinical condition?", o: ["Claw hand", "Wrist drop", "Erb's palsy", "Ape hand"], a: "C" },
+                    { n: 5, q: "Which nerve arises from the posterior cord of the brachial plexus?", o: ["Median nerve", "Ulnar nerve", "Musculocutaneous nerve", "Radial nerve"], a: "D" },
+                    { n: 6, q: "The lumbar plexus is found within the substance of which muscle?", o: ["Quadratus lumborum", "Psoas major", "Iliacus", "Piriformis"], a: "B" },
+                    { n: 7, q: "Which nerve of the lumbar plexus innervates the quadriceps femoris muscle group?", o: ["Obturator nerve", "Femoral nerve", "Sciatic nerve", "Ilioinguinal nerve"], a: "B" },
+                    { n: 8, q: "The sacral plexus is formed by the anterior rami of which spinal nerves?", o: ["L1-L4", "L4-S4", "T12-L3", "S2-S5"], a: "B" },
+                    { n: 9, q: "Which is the largest nerve in the human body, arising from the sacral plexus?", o: ["Femoral nerve", "Pudendal nerve", "Sciatic nerve", "Tibial nerve"], a: "C" },
+                    { n: 10, q: " \"Winged scapula\" is caused by damage to the long thoracic nerve, which arises from which part of the brachial plexus?", o: ["Roots", "Trunks", "Cords", "Divisions"], a: "A" },
+                    { n: 11, q: "The axillary nerve innervates which of the following muscles?", o: ["Biceps brachii", "Deltoid", "Triceps brachii", "Pectoralis major"], a: "B" },
+                    { n: 12, q: "Which nerve is responsible for the \"funny bone\" sensation when hit at the elbow?", o: ["Radial nerve", "Median nerve", "Ulnar nerve", "Axillary nerve"], a: "C" },
+                    { n: 13, q: "The obturator nerve is responsible for innervating which muscle group?", o: ["Hip flexors", "Knee extensors", "Hip adductors", "Plantar flexors"], a: "C" },
+                    { n: 14, q: "Which nerve provides motor innervation to the muscles of the perineum and external genitalia?", o: ["Sciatic nerve", "Pudendal nerve", "Obturator nerve", "Femoral nerve"], a: "B" },
+                    { n: 15, q: "Ansa cervicalis is a loop of nerves that is part of which plexus?", o: ["Brachial plexus", "Cervical plexus", "Lumbar plexus", "Sacral plexus"], a: "B" },
+                    { n: 16, q: "The \"waiter's tip\" position of the arm is a classic sign of injury to which roots?", o: ["C5-C6", "C8-T1", "L2-L4", "S1-S3"], a: "A" },
+                    { n: 17, q: "Which nerve travels through the carpal tunnel of the wrist?", o: ["Ulnar nerve", "Radial nerve", "Median nerve", "Musculocutaneous nerve"], a: "C" },
+                    { n: 18, q: "The sciatic nerve eventually divides into which two major branches?", o: ["Femoral and Obturator", "Tibial and Common Fibular", "Median and Ulnar", "Axillary and Radial"], a: "B" },
+                    { n: 19, q: "Which plexus serves the skin and muscles of the pelvic floor?", o: ["Lumbar plexus", "Sacral plexus", "Cervical plexus", "Brachial plexus"], a: "B" },
+                    { n: 20, q: "Most nerve plexuses are formed by the union of:", o: ["Dorsal rami", "Ventral rami", "White rami communicantes", "Gray rami communicantes"], a: "B" }
+                ]
+            },
+            {
+                id: 7,
+                title: "Additional Nerve Plexus Questions",
+                questions: [
+                    { n: 1, q: "The cervical plexus is formed by the anterior rami of the first four cervical spinal nerves. Which spinal levels contribute to its formation?", o: ["C1-C3", "C1-C4", "C2-C5", "C3-C6"], a: "B" },
+                    { n: 2, q: "The cervical plexus provides both sensory and motor innervation to structures in the neck. Which type of fibers are predominantly present in this plexus?", o: ["Pure motor", "Pure sensory", "Mixed motor and sensory", "Autonomic only"], a: "C" },
+                    { n: 3, q: "Which major motor nerve arises from the cervical plexus and is essential for diaphragmatic movement?", o: ["Vagus nerve", "Phrenic nerve", "Accessory nerve", "Hypoglossal nerve"], a: "B" },
+                    { n: 4, q: "The phrenic nerve originates from which spinal cord segments, although it is closely related to the cervical plexus?", o: ["C1-C2", "C2-C4", "C3-C5", "C4-C6"], a: "C" },
+                    { n: 5, q: "Which sensory branch of the cervical plexus supplies the skin over the clavicle and shoulder region?", o: ["Lesser occipital nerve", "Greater auricular nerve", "Transverse cervical nerve", "Supraclavicular nerves"], a: "D" },
+                    { n: 6, q: "Which sensory nerve of the cervical plexus ascends along the posterior border of the sternocleidomastoid muscle to supply the scalp posterior to the ear?", o: ["Greater auricular nerve", "Lesser occipital nerve", "Supraclavicular nerve", "Transverse cervical nerve"], a: "B" },
+                    { n: 7, q: "Which cervical plexus branch supplies sensation to the anterior neck region?", o: ["Greater auricular nerve", "Lesser occipital nerve", "Transverse cervical nerve", "Supraclavicular nerve"], a: "C" },
+                    { n: 8, q: "Which cervical plexus nerve provides sensation to the skin over the parotid gland and angle of the mandible?", o: ["Lesser occipital nerve", "Greater auricular nerve", "Transverse cervical nerve", "Supraclavicular nerve"], a: "B" },
+                    { n: 9, q: "The cervical plexus lies deep to which muscle in the neck?", o: ["Trapezius", "Sternocleidomastoid", "Platysma", "Scalene anterior"], a: "B" },
+                    { n: 10, q: "Which anatomical landmark is commonly used to identify the point where the cutaneous branches of the cervical plexus emerge?", o: ["Carotid triangle", "Erb's point (nerve point of neck)", "Jugular foramen", "Clavicle"], a: "B" },
+                    { n: 11, q: "The brachial plexus is formed by the anterior rami of specific spinal nerves that supply the upper limb. Which spinal nerve roots contribute to its formation?", o: ["C1-C4", "C4-C8", "C5-T1", "C6-T2"], a: "C" },
+                    { n: 12, q: "The brachial plexus is organized into roots, trunks, divisions, cords, and branches. Which structure is formed by the union of the C5 and C6 roots?", o: ["Middle trunk", "Inferior trunk", "Superior trunk", "Posterior cord"], a: "C" },
+                    { n: 13, q: "Which trunk of the brachial plexus is formed by the continuation of the C7 root alone?", o: ["Superior trunk", "Middle trunk", "Inferior trunk", "Posterior cord"], a: "B" },
+                    { n: 14, q: "Each trunk of the brachial plexus divides into anterior and posterior divisions. Which divisions primarily supply the flexor compartments of the upper limb?", o: ["Posterior divisions", "Anterior divisions", "Mixed divisions", "Terminal branches"], a: "B" },
+                    { n: 15, q: "The cords of the brachial plexus are named according to their relationship with which anatomical structure?", o: ["Clavicle", "First rib", "Axillary artery", "Subclavian vein"], a: "C" },
+                    { n: 16, q: "Which cord of the brachial plexus gives rise to the musculocutaneous nerve?", o: ["Posterior cord", "Medial cord", "Lateral cord", "Inferior trunk"], a: "C" },
+                    { n: 17, q: "Which terminal branch arises from both the medial and lateral cords of the brachial plexus?", o: ["Ulnar nerve", "Radial nerve", "Median nerve", "Axillary nerve"], a: "C" },
+                    { n: 18, q: "Which nerve arises from the posterior cord and innervates the extensor muscles of the arm and forearm?", o: ["Musculocutaneous nerve", "Median nerve", "Ulnar nerve", "Radial nerve"], a: "D" },
+                    { n: 19, q: "Which nerve arises from the posterior cord and innervates the deltoid and teres minor muscles?", o: ["Radial nerve", "Axillary nerve", "Musculocutaneous nerve", "Median nerve"], a: "B" },
+                    { n: 20, q: "Within the brachial plexus, the posterior cord gives rise to several important terminal and collateral branches. Which combination of nerves arises directly from the posterior cord?", o: ["Musculocutaneous and median nerves", "Ulnar and median nerves", "Axillary and radial nerves", "Musculocutaneous and ulnar nerves"], a: "C" },
+                    { n: 21, q: "The lumbar plexus is formed by the anterior rami of specific spinal nerves located within the posterior abdominal wall. Which spinal levels contribute to its formation?", o: ["T12-L3", "L1-L4", "L2-L5", "L3-S1"], a: "B" },
+                    { n: 22, q: "The lumbar plexus is anatomically located within which muscle of the posterior abdominal wall?", o: ["Quadratus lumborum", "Psoas major", "Iliacus", "Transversus abdominis"], a: "B" },
+                    { n: 23, q: "Which major nerve of the lumbar plexus emerges from the lateral border of the psoas major and supplies the anterior thigh muscles?", o: ["Obturator nerve", "Femoral nerve", "Sciatic nerve", "Iliohypogastric nerve"], a: "B" },
+                    { n: 24, q: "Which nerve arises from L2-L4 and exits medially from the psoas major to supply the medial compartment of the thigh?", o: ["Femoral nerve", "Obturator nerve", "Lateral femoral cutaneous nerve", "Genitofemoral nerve"], a: "B" },
+                    { n: 25, q: "Which nerve of the lumbar plexus provides sensation to the anterolateral thigh and is commonly involved in meralgia paresthetica?", o: ["Femoral nerve", "Obturator nerve", "Lateral femoral cutaneous nerve", "Ilioinguinal nerve"], a: "C" },
+                    { n: 26, q: "Which lumbar plexus nerve originates from L1 and supplies the skin of the lower abdominal wall and upper gluteal region?", o: ["Iliohypogastric nerve", "Femoral nerve", "Obturator nerve", "Genitofemoral nerve"], a: "A" },
+                    { n: 27, q: "Which nerve arises from L1 and passes through the inguinal canal to supply the skin of the groin and upper medial thigh?", o: ["Iliohypogastric nerve", "Ilioinguinal nerve", "Femoral nerve", "Obturator nerve"], a: "B" },
+                    { n: 28, q: "Which nerve originates from L1-L2 and divides into genital and femoral branches?", o: ["Iliohypogastric nerve", "Femoral nerve", "Genitofemoral nerve", "Obturator nerve"], a: "C" },
+                    { n: 29, q: "The femoral nerve innervates which muscle group primarily responsible for knee extension?", o: ["Hamstrings", "Quadriceps femoris", "Adductor group", "Gluteal muscles"], a: "B" },
+                    { n: 30, q: "The obturator nerve innervates which muscle group primarily responsible for thigh adduction?", o: ["Quadriceps", "Hamstrings", "Adductors", "Gluteals"], a: "C" },
+                    { n: 31, q: "Which nerve provides sensory innervation to the anterior thigh and medial leg via its terminal branch (saphenous nerve)?", o: ["Obturator nerve", "Femoral nerve", "Sciatic nerve", "Ilioinguinal nerve"], a: "B" },
+                    { n: 32, q: "Which lumbar plexus nerve is most likely injured during pelvic surgery affecting thigh adduction?", o: ["Femoral nerve", "Obturator nerve", "Sciatic nerve", "Genitofemoral nerve"], a: "B" },
+                    { n: 33, q: "Which nerve of the lumbar plexus travels lateral to the psoas major and crosses the iliacus muscle?", o: ["Obturator nerve", "Femoral nerve", "Genitofemoral nerve", "Iliohypogastric nerve"], a: "B" },
+                    { n: 34, q: "Which nerve of the lumbar plexus runs on the anterior surface of the psoas major?", o: ["Femoral nerve", "Obturator nerve", "Genitofemoral nerve", "Iliohypogastric nerve"], a: "C" },
+                    { n: 35, q: "Which nerve of the lumbar plexus is purely sensory?", o: ["Femoral nerve", "Obturator nerve", "Lateral femoral cutaneous nerve", "Genitofemoral nerve"], a: "C" },
+                    { n: 36, q: "Which spinal nerve contributes to both the lumbar and sacral plexuses via the lumbosacral trunk?", o: ["L3", "L4", "L5", "S1"], a: "C" },
+                    { n: 37, q: "Which structure marks the inferior boundary of the lumbar plexus region as it transitions into the sacral plexus?", o: ["Iliac crest", "Pelvic brim", "Lumbosacral trunk", "Sacral promontory"], a: "C" },
+                    { n: 38, q: "Which lumbar plexus nerve provides motor innervation to the iliacus muscle?", o: ["Obturator nerve", "Femoral nerve", "Sciatic nerve", "Iliohypogastric nerve"], a: "B" },
+                    { n: 39, q: "Which nerve supplies sensation to the medial aspect of the thigh?", o: ["Femoral nerve", "Obturator nerve", "Lateral femoral cutaneous nerve", "Ilioinguinal nerve"], a: "B" },
+                    { n: 40, q: "Which lumbar plexus nerve is most likely affected in a patient presenting with loss of knee extension and reduced patellar reflex?", o: ["Obturator nerve", "Femoral nerve", "Sciatic nerve", "Genitofemoral nerve"], a: "B" },
+                    { n: 41, q: "The sacral plexus is formed by the lumbosacral trunk and anterior rami of specific sacral spinal nerves. Which spinal levels contribute to its formation?", o: ["L2-L5", "L4-S4", "L5-S5", "S1-S5"], a: "B" },
+                    { n: 42, q: "The sacral plexus is located on the posterior pelvic wall. Which muscle lies anterior to the plexus?", o: ["Iliacus", "Psoas major", "Piriformis", "Quadratus lumborum"], a: "C" },
+                    { n: 43, q: "Which is the largest nerve of the sacral plexus and the body?", o: ["Femoral nerve", "Obturator nerve", "Sciatic nerve", "Pudendal nerve"], a: "C" },
+                    { n: 44, q: "The sciatic nerve is composed of two major components. Which nerves form it?", o: ["Femoral and obturator", "Tibial and common fibular (peroneal)", "Pudendal and gluteal", "Superior and inferior gluteal"], a: "B" },
+                    { n: 45, q: "Which part of the sciatic nerve supplies the posterior compartment of the thigh?", o: ["Common fibular nerve", "Tibial nerve", "Femoral nerve", "Obturator nerve"], a: "B" },
+                    { n: 46, q: "Which branch of the sacral plexus supplies the gluteus medius and minimus muscles?", o: ["Inferior gluteal nerve", "Superior gluteal nerve", "Sciatic nerve", "Pudendal nerve"], a: "B" },
+                    { n: 47, q: "Which nerve supplies the gluteus maximus muscle?", o: ["Superior gluteal nerve", "Inferior gluteal nerve", "Sciatic nerve", "Pudendal nerve"], a: "B" },
+                    { n: 48, q: "Which sacral plexus nerve exits the pelvis through the greater sciatic foramen above the piriformis muscle?", o: ["Sciatic nerve", "Pudendal nerve", "Superior gluteal nerve", "Inferior gluteal nerve"], a: "C" },
+                    { n: 49, q: "Which sacral plexus nerve exits the pelvis below the piriformis muscle and re-enters through the lesser sciatic foramen?", o: ["Sciatic nerve", "Pudendal nerve", "Superior gluteal nerve", "Inferior gluteal nerve"], a: "B" },
+                    { n: 50, q: "Which nerve of the sacral plexus provides sensory and motor innervation to the perineum?", o: ["Sciatic nerve", "Pudendal nerve", "Inferior gluteal nerve", "Superior gluteal nerve"], a: "B" },
+                    { n: 51, q: "Which nerve is responsible for dorsiflexion of the foot and is a branch of the sciatic nerve?", o: ["Tibial nerve", "Common fibular nerve", "Femoral nerve", "Obturator nerve"], a: "B" },
+                    { n: 52, q: "Which nerve is responsible for plantarflexion of the foot?", o: ["Tibial nerve", "Common fibular nerve", "Femoral nerve", "Obturator nerve"], a: "A" },
+                    { n: 53, q: "Which sacral plexus nerve provides sensation to the posterior thigh and leg?", o: ["Femoral nerve", "Posterior femoral cutaneous nerve", "Obturator nerve", "Lateral femoral cutaneous nerve"], a: "B" },
+                    { n: 54, q: "Which nerve is most commonly injured in posterior hip dislocation?", o: ["Femoral nerve", "Obturator nerve", "Sciatic nerve", "Pudendal nerve"], a: "C" },
+                    { n: 55, q: "Which sacral plexus nerve contributes to control of urinary and fecal continence?", o: ["Sciatic nerve", "Pudendal nerve", "Superior gluteal nerve", "Inferior gluteal nerve"], a: "B" },
+                    { n: 56, q: "Which nerve arises from L4-S1 and supplies the gluteus medius muscle?", o: ["Inferior gluteal nerve", "Superior gluteal nerve", "Sciatic nerve", "Pudendal nerve"], a: "B" },
+                    { n: 57, q: "Which component of the sacral plexus contributes fibers to both lumbar and sacral plexuses?", o: ["S1", "S2", "Lumbosacral trunk (L4-L5)", "S3"], a: "C" },
+                    { n: 58, q: "Which sacral plexus nerve innervates the short lateral rotator muscles of the hip?", o: ["Sciatic nerve", "Nerve to obturator internus", "Femoral nerve", "Obturator nerve"], a: "B" },
+                    { n: 59, q: "Which nerve supplies the quadratus femoris muscle?", o: ["Nerve to quadratus femoris", "Sciatic nerve", "Femoral nerve", "Pudendal nerve"], a: "A" },
+                    { n: 60, q: "Which clinical sign is associated with injury to the common fibular nerve?", o: ["Loss of plantarflexion", "Foot drop", "Loss of knee extension", "Loss of thigh adduction"], a: "B" }
+                ]
+            },
+            {
+                id: 8,
+                title: "Section 8: Reflexes Quiz",
+                questions: [
+                    { n: 1, q: "A reflex is defined as an automatic, rapid, and involuntary response of the body to a specific stimulus mediated through a neural pathway known as a reflex arc. Which component of the nervous system is primarily responsible for mediating most simple reflexes?", o: ["Cerebral cortex", "Spinal cord", "Cerebellum", "Basal ganglia"], a: "B" },
+                    { n: 2, q: "The reflex arc represents the neural pathway responsible for reflex action. Which of the following structures is the correct sequence in a reflex arc?", o: ["Effector -> Motor neuron -> Receptor -> Sensory neuron -> CNS", "Receptor -> Sensory neuron -> Integration center -> Motor neuron -> Effector", "Sensory neuron -> Effector -> Motor neuron -> Receptor -> CNS", "CNS -> Receptor -> Motor neuron -> Sensory neuron -> Effector"], a: "B" },
+                    { n: 3, q: "The stretch reflex (myotatic reflex) plays an important role in maintaining muscle tone and posture. Which sensory receptor detects muscle stretch in this reflex?", o: ["Golgi tendon organ", "Muscle spindle", "Pacinian corpuscle", "Free nerve endings"], a: "B" },
+                    { n: 4, q: "Deep tendon reflexes are commonly used in neurological examination to assess the integrity of spinal cord segments and peripheral nerves. Which spinal segment is associated with the biceps reflex?", o: ["C1-C2", "C5-C6", "C7-C8", "T1-T2"], a: "B" },
+                    { n: 5, q: "Superficial reflexes are elicited by cutaneous stimulation rather than tendon stretch. Which reflex is considered a superficial reflex?", o: ["Patellar reflex", "Biceps reflex", "Plantar reflex", "Achilles reflex"], a: "C" },
+                    { n: 6, q: "Hyperreflexia is commonly associated with lesions affecting:", o: ["Lower motor neurons", "Peripheral nerves", "Upper motor neurons", "Neuromuscular junction"], a: "C" },
+                    { n: 7, q: "A 55-year-old man presents with progressive weakness of the right arm and leg after a stroke. Neurological examination reveals increased muscle tone, exaggerated deep tendon reflexes, and a positive Babinski sign on the right side. Which type of neurological lesion most likely explains these findings?", o: ["Lower motor neuron lesion", "Peripheral nerve lesion", "Upper motor neuron lesion", "Neuromuscular junction disorder"], a: "C" },
+                    { n: 8, q: "Loss of deep tendon reflexes may occur in diseases affecting peripheral nerves or anterior horn cells. Which disease commonly presents with areflexia?", o: ["Parkinson disease", "Guillain-Barre syndrome", "Multiple sclerosis", "Epilepsy"], a: "B" },
+                    { n: 9, q: "A patient with facial trauma undergoes neurological examination. When the cornea is lightly touched with cotton, there is no blinking response in either eye. Which cranial nerves are responsible for the afferent and efferent limbs of this reflex?", o: ["CN II and CN III", "CN V and CN VII", "CN VIII and CN IX", "CN IX and CN X"], a: "B" },
+                    { n: 10, q: "A 45-year-old patient complains of weakness in the left leg. Neurological examination shows decreased muscle tone, muscle atrophy, fasciculations, and absent deep tendon reflexes in the affected limb. Which type of lesion most likely explains these findings?", o: ["Upper motor neuron lesion", "Lower motor neuron lesion", "Cerebellar lesion", "Cortical lesion"], a: "B" }
+                ]
+            },
+            {
+                id: 9,
+                title: "Section 9: Spinal Cord Quiz",
+                questions: [
+                    { n: 1, q: "During adult development, the spinal cord does not extend the full length of the vertebral column due to differential growth. As a result, the conus medullaris typically terminates at which vertebral level?", o: ["T12", "L1-L2", "L3", "S1"], a: "B" },
+                    { n: 2, q: "A lumbar puncture is safely performed below the termination of the spinal cord to avoid injury. At which anatomical level is the spinal cord absent, allowing safe CSF access?", o: ["T12-L1", "L1-L2", "L3-L4", "S1-S2"], a: "C" },
+                    { n: 3, q: "A patient presents with loss of vibration and position sense below a lesion. Which ascending tract located in the posterior column is primarily responsible for transmitting these modalities?", o: ["Spinothalamic tract", "Corticospinal tract", "Dorsal column-medial lemniscus pathway", "Spinoreticular tract"], a: "C" },
+                    { n: 4, q: "A lesion affecting the anterior spinal artery would compromise blood supply to which major portion of the spinal cord?", o: ["Posterior one-third", "Lateral column only", "Anterior two-thirds", "Central canal only"], a: "C" },
+                    { n: 5, q: "A patient demonstrates ipsilateral motor weakness below a spinal cord lesion. Which tract is most likely affected, considering its decussation occurs in the medulla?", o: ["Spinothalamic", "Corticospinal", "Spinocerebellar", "Vestibulospinal"], a: "B" },
+                    { n: 6, q: "The lateral horn of the spinal cord is particularly prominent in certain segments where autonomic neurons are concentrated. Which spinal levels contain this structure?", o: ["C1-C4", "T1-L2", "L3-L5", "S2-S4"], a: "B" },
+                    { n: 7, q: "A patient with a spinal cord lesion retains pain and temperature sensation but loses proprioception and vibration. Which region of the spinal cord is most likely affected?", o: ["Anterior column", "Lateral column", "Posterior column", "Central canal"], a: "C" },
+                    { n: 8, q: "In spinal cord anatomy, which structure serves as the inferior extension of the pia mater and anchors the cord to the coccyx?", o: ["Denticulate ligament", "Filum terminale", "Ligamentum flavum", "Posteritudinal ligament"], a: "B" },
+                    { n: 9, q: "A lesion affecting fibers that cross immediately within 1-2 spinal segments would impair which sensory modality?", o: ["Proprioception", "Vibration", "Pain and temperature", "Fine touch"], a: "C" },
+                    { n: 10, q: "A spinal cord lesion leads to impaired unconscious proprioception without affecting conscious position sense. Which tract is involved?", o: ["Dorsal column", "Spinothalamic", "Spinocerebellar", "Corticospinal"], a: "C" },
+                    { n: 11, q: "The denticulate ligaments play a key role in stabilizing the spinal cord. Between which meningeal layers are they located?", o: ["Dura and bone", "Pia and dura", "Arachnoid and dura", "Pia and arachnoid"], a: "B" },
+                    { n: 12, q: "A patient has a lesion at the cervical enlargement. Which functional deficit is most likely observed?", o: ["Loss of trunk movement", "Upper limb weakness", "Lower limb paralysis only", "Respiratory arrest"], a: "B" },
+                    { n: 13, q: "The artery of Adamkiewicz plays a critical role in spinal cord vascularization. Which region does it primarily supply?", o: ["Cervical cord", "Upper thoracic cord", "Lower thoracic and lumbar cord", "Sacral cord only"], a: "C" },
+                    { n: 14, q: "A lesion affecting the anterior horn of the spinal cord would result in which type of neurological deficit?", o: ["Sensory loss", "Upper motor neuron signs", "Lower motor neuron weakness", "Autonomic dysfunction"], a: "C" },
+                    { n: 15, q: "Which spinal cord region contains the least amount of white matter due to fewer ascending and descending fibers?", o: ["Cervical", "Thoracic", "Lumbar", "Sacral"], a: "D" },
+                    { n: 16, q: "A lesion affecting the dorsal root ganglion would primarily disrupt which function?", o: ["Motor output", "Autonomic output", "Sensory input", "Reflex coordination"], a: "C" },
+                    { n: 17, q: "Which anatomical feature allows spinal nerves to exit the vertebral column?", o: ["Vertebral canal", "Intervertebral foramen", "Lamina", "Spinous process"], a: "B" },
+                    { n: 18, q: "A patient presents with loss of voluntary motor control below a lesion. Which descending tract is primarily involved?", o: ["Spinothalamic", "Corticospinal", "Spinocerebellar", "Dorsal column"], a: "B" },
+                    { n: 19, q: "Which structure connects the two halves of the spinal cord gray matter and contains the central canal?", o: ["White commissure", "Gray commissure", "Posterior column", "Lateral horn"], a: "B" },
+                    { n: 20, q: "A lesion affecting the posterior spinal arteries would most likely impair which function?", o: ["Motor function", "Pain sensation", "Proprioception", "Autonomic function"], a: "C" },
+                    { n: 21, q: "A patient demonstrates contralateral loss of pain and temperature below a spinal lesion. Which tract is involved?", o: ["Corticospinal", "Dorsal column", "Spinothalamic", "Vestibulospinal"], a: "C" },
+                    { n: 22, q: "Which region of the spinal cord is most susceptible to ischemic injury due to its vascular supply?", o: ["Posterior column", "Central canal", "Anterior two-thirds", "Lateral horn"], a: "C" },
+                    { n: 23, q: "A patient with damage to the spinocerebellar tract would most likely exhibit which deficit?", o: ["Loss of voluntary movement", "Loss of pain sensation", "Ataxia", "Paralysis"], a: "C" },
+                    { n: 24, q: "Which meningeal layer directly covers the spinal cord and follows its contours closely?", o: ["Dura mater", "Arachnoid mater", "Pia mater", "Epidural layer"], a: "C" },
+                    { n: 25, q: "Which spinal cord segment is associated with parasympathetic outflow to pelvic organs?", o: ["T1-T4", "T5-T10", "L1-L2", "S2-S4"], a: "D" },
+                    { n: 26, q: "A lesion in the thoracic spinal cord would most likely spare which function?", o: ["Trunk movement", "Lower limb movement", "Upper limb movement", "Autonomic function"], a: "C" },
+                    { n: 27, q: "Which tract is responsible for transmitting crude touch and pressure sensations?", o: ["Dorsal column", "Spinothalamic", "Corticospinal", "Spinocerebellar"], a: "B" },
+                    { n: 28, q: "Which spinal cord structure is located centrally and contains cerebrospinal fluid?", o: ["Gray horn", "Central canal", "Posterior column", "Lateral horn"], a: "B" },
+                    { n: 29, q: "A lesion affecting the corticospinal tract above its decussation would produce which deficit?", o: ["Ipsilateral paralysis", "Contralateral paralysis", "Bilateral paralysis", "No deficit"], a: "B" },
+                    { n: 30, q: "Which anatomical feature explains why lumbar nerve roots travel downward before exiting the vertebral column?", o: ["Short spinal cord", "Growth mismatch between cord and vertebrae", "Thick dura mater", "Narrow spinal canal"], a: "B" },
+                    { n: 31, q: "A patient presents with urinary retention, decreased anal tone, and bilateral lower limb weakness after trauma. Which spinal levels are most likely involved?", o: ["C1-C4", "T1-T6", "L2-S5 nerve roots", "T12-L1 cord"], a: "C" },
+                    { n: 32, q: "A patient presents with progressive lower limb weakness and sensory loss, but upper limbs are normal. MRI shows a lesion at T10. Which function is most likely preserved?", o: ["Lower limb movement", "Upper limb movement", "Autonomic function", "Pain sensation"], a: "B" },
+                    { n: 33, q: "A patient presents with ataxia without loss of conscious proprioception. Which tract is likely affected?", o: ["Dorsal column", "Spinothalamic", "Spinocerebellar", "Corticospinal"], a: "C" },
+                    { n: 34, q: "A patient presents with sudden loss of pain and temperature on the left side of the body starting two levels below a right-sided spinal lesion. Which tract is affected?", o: ["Corticospinal tract", "Dorsal column", "Spinothalamic tract", "Spinocerebellar tract"], a: "C" },
+                    { n: 35, q: "A spinal cord injury disrupts fibers responsible for crude touch and pressure sensation. Which tract is involved?", o: ["Dorsal column", "Spinothalamic tract", "Corticospinal tract", "Spinocerebellar tract"], a: "B" },
+                    { n: 36, q: "A patient presents with damage to the dorsal root ganglion. Which function is primarily affected?", o: ["Motor output", "Sensory input", "Autonomic function", "Reflex output"], a: "B" },
+                    { n: 37, q: "Which spinal cord tract demonstrates somatotopic organization such that fibers from lower body regions are located more medially in the dorsal columns?", o: ["Spinothalamic tract", "Corticospinal tract", "Fasciculus gracilis", "Fasciculus cuneatus"], a: "C" },
+                    { n: 38, q: "Which spinal cord tract demonstrates somatotopic organization such that fibers from lower body regions are located more medially in the dorsal columns?", o: ["Spinothalamic tract", "Corticospinal tract", "Fasciculus gracilis", "Fasciculus cuneatus"], a: "C" },
+                    { n: 39, q: "Which descending tract originates in the motor cortex, descends through the brainstem, and decussates at the pyramidal decussation in the medulla?", o: ["Spinothalamic", "Dorsal column", "Corticospinal", "Spinocerebellar"], a: "C" },
+                    { n: 40, q: "Within the dorsal column-medial lemniscus system, which fasciculus carries sensory information from the lower half of the body and is positioned medially in the posterior column throughout the spinal cord?", o: ["Fasciculus cuneatus", "Fasciculus gracilis", "Spinothalamic tract", "Spinocerebellar tract"], a: "B" }
+                ]
+            }
+        ];
+
+        let audioCtx = null;
+        function playTone(freq, type, duration) {
+            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = type;
+            osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+            gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + duration);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start();
+            osc.stop(audioCtx.currentTime + duration);
+        }
+
+        const playCorrect = () => playTone(880, 'sine', 0.2);
+        const playWrong = () => playTone(220, 'square', 0.2);
+
+        function renderQuiz() {
+            const container = document.getElementById('quiz-container');
+            let totalPossible = 0;
+
+            quizSections.forEach(section => {
+                const sectionHtml = `
+                    <div id="sec-${section.id}" class="space-y-8">
+                        <div class="flex justify-between items-center border-b-4 border-indigo-100 pb-3">
+                            <h2 class="text-2xl font-black text-indigo-900 uppercase">${section.title}</h2>
+                            <button onclick="resetSection(${section.id})" class="redo-btn">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+                                Redo Section
+                            </button>
+                        </div>
+                        <div class="grid grid-cols-1 gap-6">
+                            ${section.questions.map((q, qIdx) => {
+                                totalPossible++;
+                                return `
+                                    <div class="bg-white p-6 border-l-8 border-indigo-500 rounded-2xl shadow-md hover:shadow-lg transition-shadow q-block" data-section="${section.id}" data-correct="${q.a}">
+                                        <p class="font-bold text-lg mb-4 text-gray-800">${q.n}. ${q.q}</p>
+                                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 options-grid">
+                                            ${q.o.map((opt, oIdx) => {
+                                                const letter = String.fromCharCode(65 + oIdx);
+                                                return `
+                                                    <label class="flex items-center p-4 border-2 border-gray-100 rounded-xl cursor-pointer hover:bg-indigo-50 transition-all relative">
+                                                        <input type="radio" name="sec${section.id}-q${qIdx}" value="${letter}" class="hidden" onchange="checkAnswer(this)">
+                                                        <span class="font-bold text-indigo-600 mr-3">${letter}.</span>
+                                                        <span class="text-gray-700">${opt}</span>
+                                                    </label>
+                                                `;
+                                            }).join('')}
+                                        </div>
+                                    </div>
+                                `;
+                            }).join('')}
+                        </div>
+                    </div>
+                `;
+                container.insertAdjacentHTML('beforeend', sectionHtml);
+            });
+            document.getElementById('max-score').textContent = totalPossible;
+        }
+
+        function checkAnswer(input) {
+            const block = input.closest('.q-block');
+            const grid = input.closest('.options-grid');
+            const labels = grid.querySelectorAll('label');
+            const selectedVal = input.value;
+            const correctVal = block.dataset.correct;
+
+            grid.classList.add('disabled-labels');
+
+            labels.forEach(label => {
+                const radio = label.querySelector('input');
+                if (radio.value === correctVal) {
+                    label.classList.add('option-correct');
+                }
+                if (radio.value === selectedVal && selectedVal !== correctVal) {
+                    label.classList.add('option-incorrect');
+                }
+            });
+
+            if (selectedVal === correctVal) {
+                playCorrect();
+            } else {
+                playWrong();
+            }
+        }
+
+        function resetSection(sectionId) {
+            const blocks = document.querySelectorAll(`.q-block[data-section="${sectionId}"]`);
+            blocks.forEach(block => {
+                const grid = block.querySelector('.options-grid');
+                grid.classList.remove('disabled-labels');
+                const labels = grid.querySelectorAll('label');
+                labels.forEach(l => {
+                    l.classList.remove('option-correct', 'option-incorrect');
+                    l.querySelector('input').checked = false;
+                });
+            });
+        }
+
+        function calculateScore() {
+            let score = 0;
+            const blocks = document.querySelectorAll('.q-block');
+            blocks.forEach(block => {
+                const checked = block.querySelector('input:checked');
+                if (checked && checked.value === block.dataset.correct) {
+                    score++;
+                }
+            });
+            document.getElementById('total-score').textContent = score;
+            document.getElementById('final-result').classList.remove('hidden');
+            window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+        }
+
+        window.onload = renderQuiz;
+    </script>
+</body>
+</html>
